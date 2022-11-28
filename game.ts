@@ -1,6 +1,5 @@
-import { readFileSync } from 'fs'
-import { split } from 'lodash-es'
+import userInput from './utilities/userInput'
 
-const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
+const input = userInput()
 
-cons
+console.log(input)

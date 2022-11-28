@@ -1,7 +1,9 @@
 {
   "dependencies": {
-    "@types/lodash-es": "^4.17.6",
+    "@types/lodash": "^4.14.190",
     "@types/node": "^18.11.9",
-    "lodash-es": "^4.17.21"
+    "@types/prompt-sync": "^4.2.0",
+    "lodash": "^4.17.21",
+    "prompt-sync": "^4.2.0"
   }
 }
