@@ -25,8 +25,6 @@ function run() {
     possibleChosenWords[random(0, possibleChosenWords.length - 1)]
   const guessedWords: string[] = []
 
-  console.log(chosenWord)
-
   while (
     currentGuess <= numberOfGuesses &&
     !includes(guessedWords, chosenWord)
@@ -41,6 +39,7 @@ function run() {
     console.log(textCyan + 'Congratulations! You Won!', textDefault)
   } else {
     console.log(textRed + 'You Loose!', textDefault)
+    console.log(`The word was ${chosenWord}.`)
   }
 
   if (lowerCase(userInput('Play again? Y/n: ')) === 'y') {
@@ -66,7 +65,6 @@ function getValidGuess() {
 
 function checkLetters(guess: string, chosenWord: string) {
   const spliceableChosenWord = split(clone(chosenWord), '')
-
   const checkedGreenLetters = map(guess, (letter, index) => {
     if (letter === chosenWord[index]) {
       spliceableChosenWord.splice(index, 1, '*')
@@ -75,7 +73,6 @@ function checkLetters(guess: string, chosenWord: string) {
       return letter
     }
   })
-
   return map(checkedGreenLetters, (letter) => {
     if (includes(spliceableChosenWord, letter)) {
       spliceableChosenWord.splice(indexOf(spliceableChosenWord, letter), 1)
