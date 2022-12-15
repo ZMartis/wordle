@@ -10,8 +10,6 @@ import {
   textDefault,
 } from './utilities/colors'
 
-textGreen
-
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
 const possibleChosenWords = split(
   readFileSync('data/possibleChosenWords.txt', 'utf-8'),
