@@ -1,4 +1,10 @@
 export interface LetterData {
   letter: string
-  state: 'exact' | 'inAnswer' | 'notInAnswer' | undefined
+  state: State | undefined
+}
+
+export enum State {
+  Exact = 'exact',
+  InAnswer = 'inAnswer',
+  NotInAnswer = 'notInAnswer',
 }

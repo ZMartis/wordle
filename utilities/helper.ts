@@ -1,15 +1,10 @@
-import { clone, each, filter, includes, indexOf, map, split } from 'lodash'
+import { clone, each, filter, includes } from 'lodash'
 import { LetterData } from '../types'
-import { textGreen, textGrey, textYellow } from './colors'
 
-export default function guessHelper(
-  guessedWords: string[],
-  answer: string,
-  remainingHelperWords: string[]
-) {
-  // iterate over list of all words and
+export default function guessHelper(remainingHelperWords: string[]) {
+  // what word will get me the most information to narrow down the remaining words
 
-  console.log('helper not yet active')
+  console.log(remainingHelperWords)
 }
 
 export function filterRemainingWords(

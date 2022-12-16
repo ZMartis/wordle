@@ -9,7 +9,7 @@ import {
   random,
   split,
 } from 'lodash'
-import { LetterData } from './types'
+import { LetterData, State } from './types'
 import {
   textCyan,
   textDefault,
@@ -47,7 +47,7 @@ function runGame() {
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {
-      handleCommands(guess, guessedWords, answer, remainingHelperWords)
+      handleCommands(guess, remainingHelperWords)
     } else {
       guessedWords.push(guess)
       currentGuess++
@@ -76,7 +76,7 @@ function getGuessData(guess: string, answer: string): LetterData[] {
 
   const greenLettersChecked = map(guess, (letter, index) => {
     if (letter === answer[index]) {
-      guessData.push({ letter: letter, state: 'exact' })
+      guessData.push({ letter: letter, state: State.Exact })
       splicableAnswer.splice(index, 1, '*')
       return '*'
     } else {
@@ -87,10 +87,10 @@ function getGuessData(guess: string, answer: string): LetterData[] {
   each(greenLettersChecked, (letter, index) => {
     if (letter !== '*') {
       if (includes(splicableAnswer, letter)) {
-        guessData[index].state = 'inAnswer'
+        guessData[index].state = State.InAnswer
         splicableAnswer.splice(indexOf(splicableAnswer, letter), 1)
       } else {
-        guessData[index].state = 'notInAnswer'
+        guessData[index].state = State.NotInAnswer
       }
     }
   })
@@ -124,15 +124,10 @@ function handleInput(input: string) {
   return input
 }
 
-function handleCommands(
-  command: string,
-  guessedWords: string[],
-  answer: string,
-  remainingHelperWords: string[]
-) {
+function handleCommands(command: string, remainingHelperWords: string[]) {
   switch (command) {
     case 'help':
-      guessHelper(guessedWords, answer, remainingHelperWords)
+      guessHelper(remainingHelperWords)
       break
 
     default:
