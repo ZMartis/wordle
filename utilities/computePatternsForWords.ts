@@ -1,42 +1,32 @@
-import { readFileSync, writeFileSync } from 'fs'
-import {
-  clone,
-  each,
-  filter,
-  includes,
-  indexOf,
-  join,
-  map,
-  split,
-} from 'lodash'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { clone, each, includes, indexOf, join, map, split } from 'lodash'
 import possiblePatterns from '../data/possiblePatterns.json'
-import { State } from '../types'
+import { GuessMap, State } from '../types'
 
-interface GuessMap {
-  [key: string]: PatternMap
-}
-
-interface PatternMap {
-  [key: string]: string[]
-}
+// Don't save the list; save the length of the filtered list.
 
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
 
 for (let i = 0; i < allowedWords.length; i++) {
-  const mapping: GuessMap = JSON.parse(
-    readFileSync('data/patternMap.json', 'utf-8')
-  )
+  let mapping: GuessMap = {}
+
+  if (existsSync('data/patternMap.json')) {
+    mapping = JSON.parse(readFileSync('data/patternMap.json', 'utf-8'))
+  }
 
   const guess = allowedWords[i]
 
   mapping[guess] = {}
 
   each(possiblePatterns, (pattern) => {
-    const stringPattern = join(pattern, ',')
-    mapping[guess][stringPattern] = filter(allowedWords, (word) => {
-      return stringPattern === patternForWord(guess, word)
-    })
+    mapping[guess][join(pattern, ',')] = 0
   })
+
+  each(allowedWords, (word) => {
+    const stringPattern = patternForWord(guess, word)
+    mapping[guess][stringPattern] += 1
+  })
+
   writeFileSync('data/patternMap.json', JSON.stringify(mapping))
 }
 

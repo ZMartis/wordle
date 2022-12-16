@@ -8,3 +8,11 @@ export enum State {
   InAnswer = 'inAnswer',
   NotInAnswer = 'notInAnswer',
 }
+
+export interface GuessMap {
+  [key: string]: PatternMap
+}
+
+export interface PatternMap {
+  [key: string]: number
+}
