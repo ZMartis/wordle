@@ -88,10 +88,10 @@ function getGuessData(guess: string, answer: string): LetterData[] {
   each(greenLettersChecked, (letter, index) => {
     if (letter !== '*') {
       if (includes(splicableAnswer, letter)) {
-        guessData[index].state = State.InAnswer
+        guessData[index].state = State.Included
         splicableAnswer.splice(indexOf(splicableAnswer, letter), 1)
       } else {
-        guessData[index].state = State.NotInAnswer
+        guessData[index].state = State.Miss
       }
     }
   })
@@ -101,9 +101,9 @@ function getGuessData(guess: string, answer: string): LetterData[] {
 
 function displayableLetters(guessData: LetterData[]): string[] {
   return map(guessData, (letterData) => {
-    if (letterData.state === 'exact') {
+    if (letterData.state === State.Exact) {
       return textGreen + letterData.letter
-    } else if (letterData.state === 'inAnswer') {
+    } else if (letterData.state === State.Included) {
       return textYellow + letterData.letter
     } else {
       return textGrey + letterData.letter

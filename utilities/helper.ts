@@ -1,5 +1,5 @@
 import { clone, each, filter, includes } from 'lodash'
-import { LetterData } from '../types'
+import { LetterData, State } from '../types'
 import { bestWord } from './findBestFirstGuess'
 
 export default function guessHelper(remainingHelperWords: string[]) {
@@ -15,12 +15,12 @@ export function filterRemainingWords(
   let filteredHelperWords = clone(helperWords)
 
   each(guessData, (letterData, index) => {
-    if (letterData.state === 'exact') {
+    if (letterData.state === State.Exact) {
       filteredHelperWords = filter(
         filteredHelperWords,
         (word) => word[index] === letterData.letter
       )
-    } else if (letterData.state === 'inAnswer') {
+    } else if (letterData.state === State.Included) {
       filteredHelperWords = filter(filteredHelperWords, (word) =>
         includes(word, letterData.letter)
       )

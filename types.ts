@@ -4,9 +4,9 @@ export interface LetterData {
 }
 
 export enum State {
-  Exact = 'exact',
-  InAnswer = 'inAnswer',
-  NotInAnswer = 'notInAnswer',
+  Exact = 'E',
+  Included = 'I',
+  Miss = 'M',
 }
 
 export interface GuessMap {
