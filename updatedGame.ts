@@ -44,6 +44,7 @@ function runGame() {
   let remainingHelperWords = clone(validWords)
 
   while (!foundAnswer(guessedWords, answer) && currentGuess <= guessLimit) {
+    // before this guess code the code to get the next best guess should start being run async
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {

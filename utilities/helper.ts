@@ -1,10 +1,11 @@
 import { clone, each, filter, includes } from 'lodash'
 import { LetterData } from '../types'
+import { bestWord } from './findBestFirstGuess'
 
 export default function guessHelper(remainingHelperWords: string[]) {
   // what word will get me the most information to narrow down the remaining words
 
-  console.log(remainingHelperWords)
+  console.log(bestWord)
 }
 
 export function filterRemainingWords(
