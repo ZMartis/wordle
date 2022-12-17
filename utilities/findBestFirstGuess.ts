@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { each, join, map, orderBy, split, sum } from 'lodash'
-import { GuessMap } from '../types'
+import { GuessMap } from '../types/types'
 
 import possiblePatterns from '../data/possiblePatterns.json'
 

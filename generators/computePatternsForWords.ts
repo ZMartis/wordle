@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { clone, each, includes, indexOf, join, map, split } from 'lodash'
 import possiblePatterns from '../data/possiblePatterns.json'
-import { GuessMap, State } from '../types'
+import { GuessMap, State } from '../types/types'
 
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
 

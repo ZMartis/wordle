@@ -1,5 +1,5 @@
 import { clone, each, filter, includes } from 'lodash'
-import { LetterData, State } from '../types'
+import { LetterData, State } from '../types/types'
 import { bestWord } from './findBestFirstGuess'
 
 export default function guessHelper(remainingHelperWords: string[]) {
@@ -7,6 +7,8 @@ export default function guessHelper(remainingHelperWords: string[]) {
 
   console.log(bestWord)
 }
+
+// ------------------------
 
 export function filterRemainingWords(
   helperWords: string[],

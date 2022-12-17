@@ -9,7 +9,7 @@ import {
   random,
   split,
 } from 'lodash'
-import { LetterData, State } from './types'
+import { LetterData, State } from '../types/types'
 import {
   textCyan,
   textDefault,
@@ -17,9 +17,9 @@ import {
   textGrey,
   textRed,
   textYellow,
-} from './utilities/colors'
-import guessHelper, { filterRemainingWords } from './utilities/helper'
-import userInput from './utilities/userInput'
+} from '../utilities/colors'
+import guessHelper, { filterRemainingWords } from '../utilities/helper'
+import userInput from '../utilities/userInput'
 
 // --------------------------------------------------
 

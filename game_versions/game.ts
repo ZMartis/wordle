@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { clone, includes, indexOf, lowerCase, map, random, split } from 'lodash'
-import userInput from './utilities/userInput'
+import userInput from '../utilities/userInput'
 import {
   textGrey,
   textGreen,
@@ -8,7 +8,7 @@ import {
   textRed,
   textCyan,
   textDefault,
-} from './utilities/colors'
+} from '../utilities/colors'
 
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
 const possibleChosenWords = split(

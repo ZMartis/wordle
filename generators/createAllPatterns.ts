@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs'
 import { join, map } from 'lodash'
-import { State } from '../types'
+import { State } from '../types/types'
 
 const mapping: string[] = []
 
