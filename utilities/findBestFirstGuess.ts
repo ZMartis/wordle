@@ -30,8 +30,8 @@ function sumGuessInformationList() {
       possiblePatterns,
       (pattern) =>
         // need to multiply the frequency of occurance by the information of the pattern
-        possibilitySpace(mapping[guess][join(pattern, ',')]) *
-        safeLog2(mapping[guess][join(pattern, ',')])
+        possibilitySpace(mapping[guess][pattern]) *
+        safeLog2(mapping[guess][pattern])
     )
 
     guessInformationArray.push({
@@ -42,31 +42,31 @@ function sumGuessInformationList() {
   return guessInformationArray
 }
 
-function allGuessInformationList() {
-  let guessInformationArray: {
-    guess: string
-    information: { pattern: string; value: number }[]
-  }[] = []
+// function allGuessInformationList() {
+//   let guessInformationArray: {
+//     guess: string
+//     information: { pattern: string; value: number }[]
+//   }[] = []
 
-  each(allowedWords, (guess) => {
-    const informationForGuess = map(possiblePatterns, (pattern) => {
-      return {
-        pattern: join(pattern, ','),
-        value:
-          // need to multiply the frequency of occurance by the information of the pattern
-          possibilitySpace(mapping[guess][join(pattern, ',')]) *
-          safeLog2(mapping[guess][join(pattern, ',')]),
-      }
-    })
+//   each(allowedWords, (guess) => {
+//     const informationForGuess = map(possiblePatterns, (pattern) => {
+//       return {
+//         pattern: join(pattern, ','),
+//         value:
+//           // need to multiply the frequency of occurance by the information of the pattern
+//           possibilitySpace(mapping[guess][join(pattern, ',')]) *
+//           safeLog2(mapping[guess][join(pattern, ',')]),
+//       }
+//     })
 
-    guessInformationArray.push({
-      guess,
-      information: orderBy(informationForGuess, ['value'], 'asc'),
-    })
-  })
+//     guessInformationArray.push({
+//       guess,
+//       information: orderBy(informationForGuess, ['value'], 'asc'),
+//     })
+//   })
 
-  return guessInformationArray
-}
+//   return guessInformationArray
+// }
 
 const orderedWordList = orderBy(
   sumGuessInformationList(),
