@@ -1,15 +1,7 @@
 import { readFileSync } from 'fs'
-import {
-  clone,
-  each,
-  includes,
-  indexOf,
-  lowerCase,
-  map,
-  random,
-  split,
-} from 'lodash'
-import { LetterData, State } from '../types/types'
+import { clone, includes, lowerCase, map, random, split } from 'lodash'
+import { State } from '../types/types'
+import { computeGuessPattern } from '../utilities/utilities'
 import {
   textCyan,
   textDefault,
@@ -18,50 +10,49 @@ import {
   textRed,
   textYellow,
 } from '../utilities/colors'
-import guessHelper, { filterRemainingWords } from '../utilities/helper'
+import { guessHelper, filterRemainingWords } from '../commands/help'
 import userInput from '../utilities/userInput'
 
 // --------------------------------------------------
 
 const validWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
-const possibleAnswers = split(
+const allPossibleAnswers = split(
   readFileSync('data/possibleChosenWords.txt', 'utf-8'),
   '\n'
 )
+
 const commands = ['help']
 const guessLimit = 6
+let currentGuess = 1
 
 // ---------------------------------------------
 
 function runGame() {
-  const answer = possibleAnswers[random(0, possibleAnswers.length - 1)]
+  const answer = allPossibleAnswers[random(0, allPossibleAnswers.length - 1)]
   const guessedWords: string[] = []
-  const guessedWordsData: LetterData[][] = []
 
-  console.log(answer)
+  currentGuess = 1
+  let possibleAnswers = clone(allPossibleAnswers)
 
-  let currentGuess = 1
-  let remainingHelperWords = clone(validWords)
-
-  while (!foundAnswer(guessedWords, answer) && currentGuess <= guessLimit) {
+  while (!includes(guessedWords, answer) && currentGuess <= guessLimit) {
     // before this guess code the code to get the next best guess should start being run async
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {
-      handleCommands(guess, remainingHelperWords)
+      handleCommands(currentGuess, guess, possibleAnswers)
     } else {
       guessedWords.push(guess)
       currentGuess++
 
-      const guessData = getGuessData(guess, answer)
-      guessedWordsData.push(guessData)
+      const guessPattern = computeGuessPattern(guess, answer)
 
-      remainingHelperWords = filterRemainingWords(
-        remainingHelperWords,
-        guessData
+      possibleAnswers = filterRemainingWords(
+        possibleAnswers,
+        guess,
+        guessPattern
       )
 
-      console.log(...displayableLetters(guessData), textDefault)
+      console.log(...displayGuess(guess, guessPattern), textDefault)
     }
   }
 
@@ -70,65 +61,30 @@ function runGame() {
 
 // ----------------
 
-function getGuessData(guess: string, answer: string): LetterData[] {
-  const guessData: LetterData[] = []
-
-  let splicableAnswer = split(clone(answer), '')
-
-  const greenLettersChecked = map(guess, (letter, index) => {
-    if (letter === answer[index]) {
-      guessData.push({ letter: letter, state: State.Exact })
-      splicableAnswer.splice(index, 1, '*')
-      return '*'
-    } else {
-      guessData.push({ letter: letter, state: undefined })
-      return letter
-    }
-  })
-  each(greenLettersChecked, (letter, index) => {
-    if (letter !== '*') {
-      if (includes(splicableAnswer, letter)) {
-        guessData[index].state = State.Included
-        splicableAnswer.splice(indexOf(splicableAnswer, letter), 1)
-      } else {
-        guessData[index].state = State.Miss
-      }
-    }
-  })
-
-  return guessData
-}
-
-function displayableLetters(guessData: LetterData[]): string[] {
-  return map(guessData, (letterData) => {
-    if (letterData.state === State.Exact) {
-      return textGreen + letterData.letter
-    } else if (letterData.state === State.Included) {
-      return textYellow + letterData.letter
-    } else {
-      return textGrey + letterData.letter
-    }
-  })
-}
-
 function handleInput(input: string) {
-  if (!includes(commands, input)) {
-    while (input.length !== 5 || !includes(validWords, input)) {
-      if (input.length !== 5) {
-        console.log(textRed + 'Guess must be 5 letters', textDefault)
-      } else {
-        console.log(textRed + 'Not in word list', textDefault)
-      }
-      input = userInput()
+  while (
+    (input.length !== 5 || !includes(validWords, input)) &&
+    !includes(commands, input)
+  ) {
+    if (input.length !== 5) {
+      console.log(textRed + 'Guess must be 5 letters', textDefault)
+    } else {
+      console.log(textRed + 'Not in word list', textDefault)
     }
+    input = userInput()
   }
+
   return input
 }
 
-function handleCommands(command: string, remainingHelperWords: string[]) {
+function handleCommands(
+  currentGuess: number,
+  command: string,
+  remainingHelperWords: string[]
+) {
   switch (command) {
     case 'help':
-      guessHelper(remainingHelperWords)
+      guessHelper(currentGuess, remainingHelperWords)
       break
 
     default:
@@ -136,8 +92,20 @@ function handleCommands(command: string, remainingHelperWords: string[]) {
   }
 }
 
+function displayGuess(guess: string, guessPattern: string): string[] {
+  return map(guessPattern, (letterState, index) => {
+    if (letterState === State.Exact) {
+      return textGreen + guess[index]
+    } else if (letterState === State.Included) {
+      return textYellow + guess[index]
+    } else {
+      return textGrey + guess[index]
+    }
+  })
+}
+
 function finishGame(guessedWords: string[], answer: string): void {
-  if (foundAnswer(guessedWords, answer)) {
+  if (includes(guessedWords, answer)) {
     console.log(textCyan + 'Congratulations! You Won!', textDefault)
   } else {
     console.log(textRed + 'You Loose!', textDefault)
@@ -150,10 +118,6 @@ function finishGame(guessedWords: string[], answer: string): void {
     console.log('Thank you for playing!')
     return
   }
-}
-
-function foundAnswer(guessedWords: string[], answer: string): boolean {
-  return includes(guessedWords, answer)
 }
 
 runGame()

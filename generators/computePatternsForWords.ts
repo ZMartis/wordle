@@ -1,11 +1,11 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { clone, each, includes, indexOf, join, map, split } from 'lodash'
 import possiblePatterns from '../data/possiblePatterns.json'
-import { GuessMap, State } from '../types/types'
+import { PatternProbabilityMap, State } from '../types/types'
 
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
 
-let mapping: GuessMap = {}
+let mapping: PatternProbabilityMap = {}
 
 if (existsSync('data/compressedPatternMap.json')) {
   mapping = JSON.parse(readFileSync('data/compressedPatternMap.json', 'utf-8'))

@@ -1,10 +1,10 @@
 import { readFileSync } from 'fs'
-import { each, join, map, orderBy, split, sum } from 'lodash'
-import { GuessMap } from '../types/types'
+import { each, map, orderBy, split, sum } from 'lodash'
+import { PatternProbabilityMap } from '../types/types'
 
 import possiblePatterns from '../data/possiblePatterns.json'
 
-const mapping: GuessMap = JSON.parse(
+const mapping: PatternProbabilityMap = JSON.parse(
   readFileSync('data/patternMap.json', 'utf-8')
 )
 
@@ -41,32 +41,6 @@ function sumGuessInformationList() {
   })
   return guessInformationArray
 }
-
-// function allGuessInformationList() {
-//   let guessInformationArray: {
-//     guess: string
-//     information: { pattern: string; value: number }[]
-//   }[] = []
-
-//   each(allowedWords, (guess) => {
-//     const informationForGuess = map(possiblePatterns, (pattern) => {
-//       return {
-//         pattern: join(pattern, ','),
-//         value:
-//           // need to multiply the frequency of occurance by the information of the pattern
-//           possibilitySpace(mapping[guess][join(pattern, ',')]) *
-//           safeLog2(mapping[guess][join(pattern, ',')]),
-//       }
-//     })
-
-//     guessInformationArray.push({
-//       guess,
-//       information: orderBy(informationForGuess, ['value'], 'asc'),
-//     })
-//   })
-
-//   return guessInformationArray
-// }
 
 const orderedWordList = orderBy(
   sumGuessInformationList(),

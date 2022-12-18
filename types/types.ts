@@ -9,10 +9,15 @@ export enum State {
   Miss = 'M',
 }
 
-export interface GuessMap {
-  [key: string]: PatternMap
+export interface PatternProbabilityMap {
+  [key: string]: PatternCount
 }
 
-export interface PatternMap {
+export interface PatternCount {
   [key: string]: number
+}
+
+export interface GuessInformation {
+  guess: string
+  information: number
 }
