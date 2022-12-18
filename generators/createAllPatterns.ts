@@ -2,14 +2,14 @@ import { writeFileSync } from 'fs'
 import { join, map } from 'lodash'
 import { State } from '../types/types'
 
-const mapping: string[] = []
+const possiblePatterns: string[] = []
 
 for (let i = 0; i < 3 ** 5; i++) {
   let trinaryString = i.toString(3)
   while (trinaryString.length < 5) {
     trinaryString = '0' + trinaryString
   }
-  mapping.push(
+  possiblePatterns.push(
     join(
       map(trinaryString, (number) => {
         switch (number) {
@@ -28,4 +28,4 @@ for (let i = 0; i < 3 ** 5; i++) {
   )
 }
 
-writeFileSync('data/possiblePatterns.json', JSON.stringify(mapping))
+writeFileSync('data/possiblePatterns.json', JSON.stringify(possiblePatterns))

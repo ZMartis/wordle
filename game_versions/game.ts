@@ -27,6 +27,8 @@ let currentGuess = 1
 
 // ---------------------------------------------
 
+// TODO: Change all console.logs to a better UI with Node process.stdout
+
 function runGame() {
   const answer = allPossibleAnswers[random(0, allPossibleAnswers.length - 1)]
   const guessedWords: string[] = []
@@ -35,7 +37,7 @@ function runGame() {
   let possibleAnswers = clone(allPossibleAnswers)
 
   while (!includes(guessedWords, answer) && currentGuess <= guessLimit) {
-    // before this guess code the code to get the next best guess should start being run async
+    // TODO: before this guess code the code to get the next best guess should start being run async
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {

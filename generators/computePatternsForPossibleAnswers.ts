@@ -12,12 +12,6 @@ const possibleChosenWords = split(
 
 let patternProbabilityMap: PatternProbabilityMap = {}
 
-if (existsSync('data/possibleChosenWordsPatternMap.json')) {
-  patternProbabilityMap = JSON.parse(
-    readFileSync('data/possibleChosenWordsPatternMap.json', 'utf-8')
-  )
-}
-
 for (let i = 0; i < allowedWords.length; i++) {
   const guess = allowedWords[i]
 
