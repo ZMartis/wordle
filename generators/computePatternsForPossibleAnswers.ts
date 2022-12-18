@@ -10,10 +10,10 @@ const possibleChosenWords = split(
   '\n'
 )
 
-let mapping: PatternProbabilityMap = {}
+let patternProbabilityMap: PatternProbabilityMap = {}
 
 if (existsSync('data/possibleChosenWordsPatternMap.json')) {
-  mapping = JSON.parse(
+  patternProbabilityMap = JSON.parse(
     readFileSync('data/possibleChosenWordsPatternMap.json', 'utf-8')
   )
 }
@@ -21,15 +21,15 @@ if (existsSync('data/possibleChosenWordsPatternMap.json')) {
 for (let i = 0; i < allowedWords.length; i++) {
   const guess = allowedWords[i]
 
-  mapping[guess] = {}
+  patternProbabilityMap[guess] = {}
 
   each(possiblePatterns, (pattern) => {
-    mapping[guess][pattern] = 0
+    patternProbabilityMap[guess][pattern] = 0
   })
 
   each(possibleChosenWords, (word) => {
     const stringPattern = computeGuessPattern(guess, word)
-    mapping[guess][stringPattern] += 1
+    patternProbabilityMap[guess][stringPattern] += 1
   })
 
   console.log(guess)
@@ -37,5 +37,5 @@ for (let i = 0; i < allowedWords.length; i++) {
 
 writeFileSync(
   'data/possibleChosenWordsPatternMap.json',
-  JSON.stringify(mapping)
+  JSON.stringify(patternProbabilityMap)
 )
