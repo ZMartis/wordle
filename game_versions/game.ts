@@ -1,84 +1,123 @@
 import { readFileSync } from 'fs'
-import { clone, includes, indexOf, lowerCase, map, random, split } from 'lodash'
-import userInput from '../utilities/userInput'
+import { clone, includes, lowerCase, map, random, split } from 'lodash'
+import { State } from '../types/types'
+import { computeGuessPattern } from '../utilities/utilities'
 import {
-  textGrey,
-  textGreen,
-  textYellow,
-  textRed,
   textCyan,
   textDefault,
+  textGreen,
+  textGrey,
+  textRed,
+  textYellow,
 } from '../utilities/colors'
+import { guessHelper, filterRemainingWords } from '../commands/help'
+import userInput from '../utilities/userInput'
 
-const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
-const possibleChosenWords = split(
+// --------------------------------------------------
+
+const validWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
+const allPossibleAnswers = split(
   readFileSync('data/possibleChosenWords.txt', 'utf-8'),
   '\n'
 )
 
-function run() {
-  const numberOfGuesses = 6
-  let currentGuess = 1
-  const chosenWord =
-    possibleChosenWords[random(0, possibleChosenWords.length - 1)]
+const commands = ['help']
+const guessLimit = 6
+let currentGuess = 1
+
+// ---------------------------------------------
+
+function runGame() {
+  const answer = allPossibleAnswers[random(0, allPossibleAnswers.length - 1)]
   const guessedWords: string[] = []
 
-  while (
-    currentGuess <= numberOfGuesses &&
-    !includes(guessedWords, chosenWord)
-  ) {
-    let guess = getValidGuess()
-    guessedWords.push(guess)
-    currentGuess++
-    console.log(...checkLetters(guess, chosenWord), textDefault)
+  currentGuess = 1
+  let possibleAnswers = clone(allPossibleAnswers)
+
+  while (!includes(guessedWords, answer) && currentGuess <= guessLimit) {
+    // before this guess code the code to get the next best guess should start being run async
+    const guess = handleInput(userInput())
+
+    if (includes(commands, guess)) {
+      handleCommands(currentGuess, guess, possibleAnswers)
+    } else {
+      guessedWords.push(guess)
+      currentGuess++
+
+      const guessPattern = computeGuessPattern(guess, answer)
+
+      possibleAnswers = filterRemainingWords(
+        possibleAnswers,
+        guess,
+        guessPattern
+      )
+
+      console.log(...displayGuess(guess, guessPattern), textDefault)
+    }
   }
 
-  if (includes(guessedWords, chosenWord)) {
+  finishGame(guessedWords, answer)
+}
+
+// ----------------
+
+function handleInput(input: string) {
+  while (
+    (input.length !== 5 || !includes(validWords, input)) &&
+    !includes(commands, input)
+  ) {
+    if (input.length !== 5) {
+      console.log(textRed + 'Guess must be 5 letters', textDefault)
+    } else {
+      console.log(textRed + 'Not in word list', textDefault)
+    }
+    input = userInput()
+  }
+
+  return input
+}
+
+function handleCommands(
+  currentGuess: number,
+  command: string,
+  remainingHelperWords: string[]
+) {
+  switch (command) {
+    case 'help':
+      guessHelper(currentGuess, remainingHelperWords)
+      break
+
+    default:
+      break
+  }
+}
+
+function displayGuess(guess: string, guessPattern: string): string[] {
+  return map(guessPattern, (letterState, index) => {
+    if (letterState === State.Exact) {
+      return textGreen + guess[index]
+    } else if (letterState === State.Included) {
+      return textYellow + guess[index]
+    } else {
+      return textGrey + guess[index]
+    }
+  })
+}
+
+function finishGame(guessedWords: string[], answer: string): void {
+  if (includes(guessedWords, answer)) {
     console.log(textCyan + 'Congratulations! You Won!', textDefault)
   } else {
     console.log(textRed + 'You Loose!', textDefault)
-    console.log(`The word was ${chosenWord}.`)
+    console.log(`The word was ${answer}.`)
   }
 
   if (lowerCase(userInput('Play again? Y/n: ')) === 'y') {
-    run()
+    runGame()
   } else {
     console.log('Thank you for playing!')
     return
   }
 }
 
-function getValidGuess() {
-  let guess = userInput()
-  while (guess.length !== 5 || !includes(allowedWords, guess)) {
-    if (guess.length !== 5) {
-      console.log(textRed + 'Guess must be 5 letters', textDefault)
-    } else {
-      console.log(textRed + 'Not in word list', textDefault)
-    }
-    guess = userInput()
-  }
-  return guess
-}
-
-function checkLetters(guess: string, chosenWord: string) {
-  const spliceableChosenWord = split(clone(chosenWord), '')
-  const checkedGreenLetters = map(guess, (letter, index) => {
-    if (letter === chosenWord[index]) {
-      spliceableChosenWord.splice(index, 1, '*')
-      return textGreen + letter
-    } else {
-      return letter
-    }
-  })
-  return map(checkedGreenLetters, (letter) => {
-    if (includes(spliceableChosenWord, letter)) {
-      spliceableChosenWord.splice(indexOf(spliceableChosenWord, letter), 1)
-      return textYellow + letter
-    } else {
-      return textGrey + letter
-    }
-  })
-}
-
-run()
+runGame()

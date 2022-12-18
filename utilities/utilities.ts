@@ -1,4 +1,14 @@
-import { clone, each, includes, indexOf, join, map, split, sum } from 'lodash'
+import {
+  clone,
+  each,
+  includes,
+  indexOf,
+  join,
+  map,
+  orderBy,
+  split,
+  sum,
+} from 'lodash'
 import { GuessInformation, PatternProbabilityMap, State } from '../types/types'
 import possiblePatterns from '../data/possiblePatterns.json'
 
@@ -71,5 +81,5 @@ export function weightedAverageGuessInformationList(
     guessInformationArray.push({ guess, information: sum(informationForGuess) })
   })
 
-  return guessInformationArray
+  return orderBy(guessInformationArray, ['information'], 'desc')
 }

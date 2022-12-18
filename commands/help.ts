@@ -1,8 +1,6 @@
 import { readFileSync } from 'fs'
 import { each, filter, split } from 'lodash'
 import { PatternProbabilityMap } from '../types/types'
-import { bestWord } from '../utilities/findBestFirstGuessFitToPossible'
-
 import possiblePatterns from '../data/possiblePatterns.json'
 import {
   computeGuessPattern,
@@ -10,38 +8,48 @@ import {
 } from '../utilities/utilities'
 
 const allowedWords = split(readFileSync('data/allowedWords.txt', 'utf-8'), '\n')
+const allPossibleAnswers = split(
+  readFileSync('data/possibleChosenWords.txt', 'utf-8'),
+  '\n'
+)
 
-let mapping: PatternProbabilityMap = {}
+let patternProbabilityMap: PatternProbabilityMap = {}
 
-export function guessHelper(
-  guessNumber: number,
-  remainingHelperWords: string[]
-) {
+export function guessHelper(guessNumber: number, possibleAnswers: string[]) {
   if (guessNumber === 1) {
-    console.log(bestWord)
-  } else {
-    fillGuessMapping(remainingHelperWords)
+    patternProbabilityMap = JSON.parse(
+      readFileSync('data/possibleChosenWordsPatternMap.json', 'utf-8')
+    )
     console.log(
       weightedAverageGuessInformationList(
-        remainingHelperWords,
-        remainingHelperWords,
-        mapping
+        allowedWords,
+        allPossibleAnswers,
+        patternProbabilityMap
+      )[0]
+    )
+  } else {
+    fillGuesspatternProbabilityMap(possibleAnswers)
+    console.log(
+      weightedAverageGuessInformationList(
+        possibleAnswers,
+        possibleAnswers,
+        patternProbabilityMap
       )[0]
     )
   }
 }
 
-function fillGuessMapping(remainingHelperWords: string[]) {
+function fillGuesspatternProbabilityMap(possibleAnswers: string[]) {
   for (let i = 0; i < allowedWords.length; i++) {
     const guess = allowedWords[i]
-    mapping[guess] = {}
+    patternProbabilityMap[guess] = {}
 
     each(possiblePatterns, (pattern) => {
-      mapping[guess][pattern] = 0
+      patternProbabilityMap[guess][pattern] = 0
     })
-    each(remainingHelperWords, (word) => {
+    each(possibleAnswers, (word) => {
       const stringPattern = computeGuessPattern(guess, word)
-      mapping[guess][stringPattern] += 1
+      patternProbabilityMap[guess][stringPattern] += 1
     })
   }
 }
