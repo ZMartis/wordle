@@ -24,7 +24,7 @@ const allPossibleAnswers = split(
   '\n'
 )
 
-const commands = ['help']
+const commands = ['--help']
 const guessLimit = 6
 let currentGuessNumber = 1
 
@@ -40,7 +40,6 @@ function runGame() {
   let possibleAnswers = clone(allPossibleAnswers)
 
   while (!includes(guessedWords, answer) && currentGuessNumber <= guessLimit) {
-    // TODO: before this guess code the code to get the next best guess should start being run async
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {
@@ -88,7 +87,7 @@ function handleCommands(
   remainingHelperWords: string[]
 ) {
   switch (command) {
-    case 'help':
+    case '--help':
       guessHelper(currentGuessNumber, remainingHelperWords)
       break
 
