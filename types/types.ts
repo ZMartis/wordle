@@ -1,8 +1,3 @@
-export interface LetterData {
-  letter: string
-  state: State | undefined
-}
-
 export enum State {
   Exact = 'E',
   Included = 'I',

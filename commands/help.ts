@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs'
 import { split } from 'lodash'
-import { PatternProbabilityMap } from '../types/types'
 import {
   guessPatternProbabilityMap,
   weightedAverageGuessInformationList,

@@ -13,6 +13,8 @@ import {
 import { GuessInformation, PatternProbabilityMap, State } from '../types/types'
 import possiblePatterns from '../data/possiblePatterns.json'
 
+// ---------------------------------
+
 export function computeGuessPattern(guess: string, answer: string) {
   const editableAnswer = split(clone(answer), '')
 
@@ -39,12 +41,16 @@ export function computeGuessPattern(guess: string, answer: string) {
   )
 }
 
+// ------------------------------------
+
 export function probabilitySpace(
   patternOccurancesCount: number,
   possibleAnswersCount: number
 ) {
   return patternOccurancesCount / possibleAnswersCount
 }
+
+// -------------------------------------
 
 export function safeLog2(
   patternOccurancesCount: number,
@@ -58,6 +64,8 @@ export function safeLog2(
     return 0
   }
 }
+
+// -----------------------------------
 
 export function weightedAverageGuessInformationList(
   guessWordList: string[],
@@ -85,6 +93,8 @@ export function weightedAverageGuessInformationList(
   return orderBy(guessInformationArray, ['information'], 'desc')
 }
 
+// ---------------------------------
+
 export function filterRemainingWords(
   possibleAnswers: string[],
   guess: string,
@@ -95,6 +105,8 @@ export function filterRemainingWords(
     return guessPattern === pattern
   })
 }
+
+// -----------------------------------
 
 export function guessPatternProbabilityMap(
   guessWordList: string[],
