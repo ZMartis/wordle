@@ -1,6 +1,7 @@
 import {
   clone,
   each,
+  filter,
   includes,
   indexOf,
   join,
@@ -82,4 +83,35 @@ export function weightedAverageGuessInformationList(
   })
 
   return orderBy(guessInformationArray, ['information'], 'desc')
+}
+
+export function filterRemainingWords(
+  possibleAnswers: string[],
+  guess: string,
+  guessPattern: string
+): string[] {
+  return filter(possibleAnswers, (possibleAnswer) => {
+    const pattern = computeGuessPattern(guess, possibleAnswer)
+    return guessPattern === pattern
+  })
+}
+
+export function guessPatternProbabilityMap(
+  guessWordList: string[],
+  possibleAnswerWordList: string[]
+) {
+  const patternProbabilityMap: PatternProbabilityMap = {}
+
+  each(guessWordList, (guess) => {
+    patternProbabilityMap[guess] = {}
+    each(possiblePatterns, (pattern) => {
+      patternProbabilityMap[guess][pattern] = 0
+    })
+    each(possibleAnswerWordList, (possibleAnswer) => {
+      const stringPattern = computeGuessPattern(guess, possibleAnswer)
+      patternProbabilityMap[guess][stringPattern] += 1
+    })
+  })
+
+  return patternProbabilityMap
 }

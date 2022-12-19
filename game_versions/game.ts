@@ -1,7 +1,10 @@
 import { readFileSync } from 'fs'
 import { clone, includes, lowerCase, map, random, split } from 'lodash'
 import { State } from '../types/types'
-import { computeGuessPattern } from '../utilities/utilities'
+import {
+  computeGuessPattern,
+  filterRemainingWords,
+} from '../utilities/utilities'
 import {
   textCyan,
   textDefault,
@@ -10,7 +13,7 @@ import {
   textRed,
   textYellow,
 } from '../utilities/colors'
-import { guessHelper, filterRemainingWords } from '../commands/help'
+import { guessHelper } from '../commands/help'
 import userInput from '../utilities/userInput'
 
 // --------------------------------------------------
@@ -23,7 +26,7 @@ const allPossibleAnswers = split(
 
 const commands = ['help']
 const guessLimit = 6
-let currentGuess = 1
+let currentGuessNumber = 1
 
 // ---------------------------------------------
 
@@ -33,18 +36,18 @@ function runGame() {
   const answer = allPossibleAnswers[random(0, allPossibleAnswers.length - 1)]
   const guessedWords: string[] = []
 
-  currentGuess = 1
+  currentGuessNumber = 1
   let possibleAnswers = clone(allPossibleAnswers)
 
-  while (!includes(guessedWords, answer) && currentGuess <= guessLimit) {
+  while (!includes(guessedWords, answer) && currentGuessNumber <= guessLimit) {
     // TODO: before this guess code the code to get the next best guess should start being run async
     const guess = handleInput(userInput())
 
     if (includes(commands, guess)) {
-      handleCommands(currentGuess, guess, possibleAnswers)
+      handleCommands(currentGuessNumber, guess, possibleAnswers)
     } else {
       guessedWords.push(guess)
-      currentGuess++
+      currentGuessNumber++
 
       const guessPattern = computeGuessPattern(guess, answer)
 
@@ -80,13 +83,13 @@ function handleInput(input: string) {
 }
 
 function handleCommands(
-  currentGuess: number,
+  currentGuessNumber: number,
   command: string,
   remainingHelperWords: string[]
 ) {
   switch (command) {
     case 'help':
-      guessHelper(currentGuess, remainingHelperWords)
+      guessHelper(currentGuessNumber, remainingHelperWords)
       break
 
     default:

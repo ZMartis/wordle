@@ -1,9 +1,8 @@
 import { readFileSync } from 'fs'
-import { each, filter, split } from 'lodash'
+import { split } from 'lodash'
 import { PatternProbabilityMap } from '../types/types'
-import possiblePatterns from '../data/possiblePatterns.json'
 import {
-  computeGuessPattern,
+  guessPatternProbabilityMap,
   weightedAverageGuessInformationList,
 } from '../utilities/utilities'
 
@@ -13,12 +12,10 @@ const allPossibleAnswers = split(
   '\n'
 )
 
-let patternProbabilityMap: PatternProbabilityMap = {}
-
 export function guessHelper(guessNumber: number, possibleAnswers: string[]) {
   if (guessNumber === 1) {
-    patternProbabilityMap = JSON.parse(
-      readFileSync('data/possibleChosenWordsPatternMap.json', 'utf-8')
+    const patternProbabilityMap = JSON.parse(
+      readFileSync('data/patternMap.json', 'utf-8')
     )
     console.log(
       weightedAverageGuessInformationList(
@@ -28,7 +25,10 @@ export function guessHelper(guessNumber: number, possibleAnswers: string[]) {
       )[0]
     )
   } else {
-    fillGuesspatternProbabilityMap(possibleAnswers)
+    const patternProbabilityMap = guessPatternProbabilityMap(
+      possibleAnswers,
+      possibleAnswers
+    )
     console.log(
       weightedAverageGuessInformationList(
         possibleAnswers,
@@ -37,32 +37,4 @@ export function guessHelper(guessNumber: number, possibleAnswers: string[]) {
       )[0]
     )
   }
-}
-
-function fillGuesspatternProbabilityMap(possibleAnswers: string[]) {
-  for (let i = 0; i < allowedWords.length; i++) {
-    const guess = allowedWords[i]
-    patternProbabilityMap[guess] = {}
-
-    each(possiblePatterns, (pattern) => {
-      patternProbabilityMap[guess][pattern] = 0
-    })
-    each(possibleAnswers, (word) => {
-      const stringPattern = computeGuessPattern(guess, word)
-      patternProbabilityMap[guess][stringPattern] += 1
-    })
-  }
-}
-
-// ------------------------
-
-export function filterRemainingWords(
-  possibleAnswers: string[],
-  guess: string,
-  guessPattern: string
-): string[] {
-  return filter(possibleAnswers, (possibleAnswer) => {
-    const pattern = computeGuessPattern(guess, possibleAnswer)
-    return guessPattern === pattern
-  })
 }
